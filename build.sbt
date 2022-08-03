@@ -1,5 +1,4 @@
 val scala3Version = "3.1.3"
-val circeVersion = "0.14.2"
 
 lazy val root = project
   .in(file("."))
@@ -10,9 +9,7 @@ lazy val root = project
     libraryDependencies ++= Seq(
       "org.typelevel" %% "cats-core" % "2.7.0",
       "org.typelevel" %% "cats-effect" % "3.3.12",
-      "io.circe" %% "circe-core" % circeVersion,
-      "io.circe" %% "circe-generic" % circeVersion,
-      "io.circe" %% "circe-parser" % circeVersion,
+      "io.circe" %% "circe-core" % "0.14.2",
       "org.scalameta" %% "munit" % "0.7.29" % Test
     )
   )
