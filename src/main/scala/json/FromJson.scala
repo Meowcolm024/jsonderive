@@ -18,28 +18,30 @@ object FromJson:
     inline m match
       case s: Mirror.SumOf[T] =>
         new FromJson[T]:
+          // type tag
           val tags = elemLabels.productIterator
             .map(tag => tag.asInstanceOf[String])
             .toList
+          // helper function associate ordinal with json
           def helper(
               tags: List[(String, Int)],
               f: String => Option[Json]
-          ): Option[(Int, Json)] =
+          ): Option[(Int, Json)] = 
             tags match
-              case Nil => None
-              case (t, i) :: ts =>
-                f(t) match
-                  case Some(j) => Some(i -> j)
-                  case None    => helper(ts, f)
+              case Nil          => None
+              case (t, i) :: ts => f(t).fold(helper(ts, f))(j => Some(i -> j))
+
           def fromJson(json: Json): Option[T] =
             for
               obj <- json.asObject
+              if obj.keys.size == 1
               (ord, j) <- helper(tags.zipWithIndex, obj.apply)
               res <- elemInstances(ord).asInstanceOf[FromJson[T]].fromJson(j)
             yield res
 
       case p: Mirror.ProductOf[T] =>
         new FromJson[T]:
+          // field labels
           val fields = elemLabels.productIterator
             .map(_.asInstanceOf[String])
             .toList

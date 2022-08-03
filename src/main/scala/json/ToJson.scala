@@ -35,9 +35,9 @@ object ToJson:
               .asInstanceOf[Product]
               .productIterator
               .zip(elemInstances.iterator)
-              .map((x, coder) => coder.asInstanceOf[ToJson[Any]].toJson(x))
+              .map((v, coder) => coder.asInstanceOf[ToJson[Any]].toJson(v))
               .zip(elemLabels.productIterator)
-              .map((x, field) => field.asInstanceOf[String] -> x)
+              .map((obj, field) => field.asInstanceOf[String] -> obj)
               .toList
             Json.fromFields(elems)
 
