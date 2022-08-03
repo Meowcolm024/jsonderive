@@ -26,7 +26,7 @@ object FromJson:
           def helper(
               tags: List[(String, Int)],
               f: String => Option[Json]
-          ): Option[(Int, Json)] = 
+          ): Option[(Int, Json)] =
             tags match
               case Nil          => None
               case (t, i) :: ts => f(t).fold(helper(ts, f))(j => Some(i -> j))

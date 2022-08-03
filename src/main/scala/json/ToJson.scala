@@ -1,7 +1,7 @@
 package json
 
 import util.Helper._
-import io.circe.{Json, Encoder, Decoder}
+import io.circe.Json
 import io.circe.syntax._
 
 import scala.deriving._
@@ -12,7 +12,10 @@ trait ToJson[T]:
 
 object ToJson:
   inline given derived[T](using m: Mirror.Of[T]): ToJson[T] =
+    // correspond to labels
     lazy val elemInstances = summonAsList[m.MirroredElemTypes, ToJson]
+    // for Sum, this will be tags for cases
+    // for Product, this will be field names
     lazy val elemLabels = constValueTuple[m.MirroredElemLabels]
 
     inline m match

@@ -5,7 +5,7 @@ import cats.effect._
 
 object Main extends IOApp.Simple:
   enum Maybe derives ToJson, FromJson, Encoder.AsObject, Decoder:
-    case Nothing()  // fails with singleton object (while circe cannot compile)
+    case Nothing() // fails with singleton object (while circe cannot compile)
     case Just(value: Int)
 
   def run: IO[Unit] =

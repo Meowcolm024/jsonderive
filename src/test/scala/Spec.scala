@@ -1,5 +1,4 @@
 import json._
-
 import io.circe.{Json, Encoder, Decoder}
 import io.circe.syntax._
 
