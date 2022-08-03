@@ -68,6 +68,6 @@ object FromJson:
   given FromJson[String] with
     def fromJson(json: Json): Option[String] = json.asString
 
-  given [T: FromJson]: FromJson[List[T]] with
-    def fromJson(json: Json): Option[List[T]] =
-      json.asArray.flatMap(_.toList.traverse(FromJson.fromJson))
+  given [T: FromJson]: FromJson[Option[T]] with
+    def fromJson(json: Json): Option[Option[T]] =
+      json.asNull.map(_ => None) <+> FromJson.fromJson(json).map(Some(_))

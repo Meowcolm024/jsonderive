@@ -2,7 +2,6 @@ package json
 
 import util.Helper._
 import io.circe.Json
-import io.circe.syntax._
 
 import scala.deriving._
 import scala.compiletime._
@@ -56,5 +55,7 @@ object ToJson:
   given ToJson[String] with
     def toJson(self: String): Json = Json.fromString(self)
 
-  given [T: ToJson]: ToJson[List[T]] with
-    def toJson(self: List[T]): Json = Json.fromValues(self.map(ToJson.toJson))
+  given [T: ToJson]: ToJson[Option[T]] with
+    def toJson(self: Option[T]): Json = self match
+      case None    => Json.Null
+      case Some(v) => ToJson.toJson(v)

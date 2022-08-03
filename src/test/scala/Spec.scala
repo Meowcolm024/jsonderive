@@ -9,6 +9,12 @@ class Spec extends munit.FunSuite:
     case Duo(i: Boolean, j: Omg)
     case Tri(x: String, y: Omg, z: Omg)
 
+  case class Box(v: Option[String])
+      derives ToJson,
+        FromJson,
+        Encoder.AsObject,
+        Decoder
+
   test("simple json encode") {
     import Omg._
     val a = Tri("hello", Mono(1), Duo(false, Mono(3)))
@@ -34,4 +40,18 @@ class Spec extends munit.FunSuite:
   test("decode fails") {
     val j = Json.obj("Mono" -> Json.True)
     assert(FromJson.fromJson[Omg](j).isEmpty && j.as[Omg].isLeft)
+  }
+
+  test("option encode") {
+    val b = Box(Some("hi"))
+    val c = Option.empty[Int]
+    assertEquals(ToJson.toJson(b), b.asJson)
+    assertEquals(ToJson.toJson(c), c.asJson)
+  }
+
+  test("option decode") {
+    val j = Json.obj("v" -> "kamisato".asJson)
+    val k = Json.obj("v" -> Json.Null)
+    assertEquals(FromJson.fromJson[Box](j), j.as[Box].toOption)
+    assertEquals(FromJson.fromJson[Box](k), k.as[Box].toOption)
   }
