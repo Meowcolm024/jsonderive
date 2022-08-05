@@ -59,3 +59,7 @@ object ToJson:
     def toJson(self: Option[T]): Json = self match
       case None    => Json.Null
       case Some(v) => ToJson.toJson(v)
+
+  given [T: ToJson]: ToJson[List[T]] with
+    def toJson(self: List[T]): Json =
+      Json.fromValues(self.map(ToJson.toJson))

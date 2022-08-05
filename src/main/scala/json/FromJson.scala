@@ -34,7 +34,7 @@ object FromJson:
           def fromJson(json: Json): Option[T] =
             for
               obj <- json.asObject
-              if obj.keys.size == 1
+              if obj.keys.size == 1 // should have exactly one field
               (ord, j) <- helper(tags.zipWithIndex, obj.apply)
               res <- elemInstances(ord).asInstanceOf[FromJson[T]].fromJson(j)
             yield res
@@ -43,12 +43,12 @@ object FromJson:
         new FromJson[T]:
           // field labels
           val fields = elemLabels.productIterator
-            .map(_.asInstanceOf[String])
+            .map(field => field.asInstanceOf[String])
             .toList
           def fromJson(json: Json): Option[T] =
             for
               obj <- json.asObject
-              if obj.keys.toSet == fields.toSet
+              if obj.keys.toSet == fields.toSet // should have the exactly same fields
               prd <- fields.traverse(obj.apply)
               out <- elemInstances
                 .zip(prd)
@@ -71,3 +71,7 @@ object FromJson:
   given [T: FromJson]: FromJson[Option[T]] with
     def fromJson(json: Json): Option[Option[T]] =
       json.asNull.map(_ => None) <+> FromJson.fromJson(json).map(Some(_))
+
+  given [T: FromJson]: FromJson[List[T]] with
+    def fromJson(json: Json): Option[List[T]] =
+      json.asArray.flatMap(_.toList.traverse(FromJson.fromJson))
